@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'ECB course project - Amazon S3 static website hosting'
+
+Resources:
+  PortfolioWebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+      Tags:
+        - Key: Project
+          Value: ECB-Student-Portfolio
+
+  PortfolioWebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PortfolioWebsiteBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadForWebsiteObjects
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${PortfolioWebsiteBucket.Arn}/*'
+
+Outputs:
+  WebsiteBucketName:
+    Description: S3 bucket name
+    Value: !Ref PortfolioWebsiteBucket
+  WebsiteURL:
+    Description: S3 static website endpoint
+    Value: !GetAtt PortfolioWebsiteBucket.WebsiteURL
